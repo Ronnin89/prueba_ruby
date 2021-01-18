@@ -1,4 +1,5 @@
-def template (data)
+#metodo que contiene la pagina web, con un navbar, un footer y las secciones de contenido del hash 
+def build_web_page(data)
     '<!DOCTYPE html>
     <html lang="es">
     <head>
@@ -31,13 +32,18 @@ def template (data)
                 </nav>
         </header>
         <main class="container" style="background-color: #4b6584;">
+        <section>
             <h1 style = "text-align: center; font-size: 50px; color: #ffda79 ;" class="py-md-5">Fotos de la NASA</h1>
             <ul style="list-style-type: none;">
             '+ photo(data) +'
             </ul>
+            <hr style= "background-color: white; height: 5px ;">
+        </section>
         <section id=count>
-            <h2 style = "text-align: center; font-size: 30px; color: black ;" class="py-md-5">Contador de Fotos</h2>
-
+            <h2 style = "text-align: center; font-size: 30px; color: #ffda79 ;" class="py-md-3">Contador de Fotos</h2>
+            <ul class="list-group pb-5">
+            ' + cant(data) + '
+            </ul>
         </section>
         </main>
         <footer id=contact>
@@ -48,37 +54,78 @@ def template (data)
         </footer>
             <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    </body>
+        </body>
     </html>
     '
-    end
-
-    def photo(data)
-        char_nasa = ''
-        data["photos"].each_slice(3) do |photo_nasa|
-            char_nasa += '<div class = "card-deck py-3 pl-5">'
-
-            photo_nasa.each do |x|
-                char_nasa += cards(x["img_src"], x["camera"]["full_name"], x["earth_date"])
-            end
-
-            char_nasa += "</div> \n\n"
+end
+        
+#metodo que captura los datos del hashs
+def photo(data)
+    char_nasa = ''
+    data["photos"].each_slice(3) do |photo_nasa| #recorre el el value de photos
+        char_nasa += '<div class = "card-deck py-3 pl-5">'
+        
+        photo_nasa.each do |x| #variable x es la que recorre el hash
+            char_nasa += cards(x["img_src"], x["camera"]["full_name"], x["earth_date"])
         end
-        return char_nasa
+        
+        char_nasa += "</div> \n\n"
+    end
+    return char_nasa
+end
+
+#metodo de contabilizacion y agregado 
+def cant(hash)
+    list_cam = ''
+    n_photo = Hash.new(0) #hash que devuelve el numero de fotos
+    hash['photos'].each do |reco|
+        x = reco["camera"]["full_name"]# x es una variable creada por mi
+        if n_photo[x] 
+            n_photo[x] += 1
+        else 
+            n_photo[x] = 1
+        end
     end
 
-    def cards(img, name_cam, date)
-        '<li>
-            <div class="card border-dark" style="width: 18rem;">
-                <img src="'+ img  +'" class="card-img-top" alt="Fotografia propiedad de NASA">
-                <div class="card-body">
-                    <p class="card-text">Fotografia elaborada por <br> Camara:'+ name_cam +'<br><hr>Earth-date:'+ date +'</p>
-                </div>
-            </div>
-         </li>
-        '
+    n_photo.each do |key, value|
+        list_cam += list_g(key, value.to_s)
     end
+    return list_cam
+end
 
-    # def photos_count(hash)
+#metodo para agregar el contenido del hash a los li
+def cards(img, name_cam, date)
+    '<li>
+    <div class="card border-dark" style="width: 18rem;">
+    <img src="'+ img  +'" class="card-img-top" alt="Fotografia propiedad de NASA">
+    <div class="card-body">
+    <p class="card-text">Detalles de la Fotografia<br> Camara:'+ name_cam +'<br><hr>Earth-date:'+ date +'</p>
+    </div>
+    </div>
+    </li>
+    '
+end
 
-    # end
+#metodo para agregar un list group con la cantidad defotos de cada camara
+def list_g(name, num)
+    '<li class="list-group-item d-flex justify-content-between align-items-center">
+    Camara: ' + name + '
+    <span class="badge badge-primary badge-pill">'+ num +'</span>
+    </li>
+    '
+end
+
+#metodo para saber la cantidad de fotos de cada camara
+def photos_count(hash)
+    n_photo = Hash.new(0) #hash que devuelve el numero de fotos
+    hash['photos'].each do |reco|
+        x = reco["camera"]["full_name"]# x es una variable creada por mi
+        if n_photo[x] 
+            n_photo[x] += 1
+        else 
+            n_photo[x] = 1
+        end
+    end
+    return n_photo
+end
+
