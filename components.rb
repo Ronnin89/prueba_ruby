@@ -115,7 +115,7 @@ def list_g(name, num)
     '
 end
 
-#metodo para saber la cantidad de fotos de cada camara
+#metodo para saber la cantidad de fotos de cada camara / pregunta bonus!
 def photos_count(hash)
     n_photo = Hash.new(0) #hash que devuelve el numero de fotos
     hash['photos'].each do |reco|
