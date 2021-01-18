@@ -11,9 +11,5 @@ def request(url)
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
     response = http.request(request)
 
-    if response.code.to_i >= 200 && response.code.to_i < 300
-        return JSON.parse(response.read_body)
-    else
-        return nil 
-    end
+    return JSON.parse(response.read_body)
 end
